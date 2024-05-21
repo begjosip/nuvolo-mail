@@ -1,5 +1,5 @@
 <p align="center">
-    <img style="background-color: #D3E4DE; padding: 12px;" src="templates/images/nuvolo.png" alt="logo" />
+    <img src="templates/images/nuvolo.png" alt="logo" />
 </p>
 
 
@@ -13,7 +13,21 @@
 
 ---
 ### Description
+
 Repository for sending email to users from queue messages over SMTP server. Developed using Python 3.10, Flask, RabbitMQ
 and Jinja2 with HTML for email templates.
+
 ---
+
+### Instructions
+
+Position correctly to project root directory and run command ``pip install -r requeriments.txt``. Given command will install all needed packages to your Python environment.
+Before running application check `.env` file and setup requeired properties.
+`SMTP_SERVER=`
+`SMTP_PORT=`
+`SMTP_APP_MAIL=`
+`SMTP_PASSWORD=`
+After setting these properies and valid RabbitMQ docker container you can run `app.py` on desired port to listen and consume messages from queues.
+
+
 
