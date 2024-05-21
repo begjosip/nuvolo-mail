@@ -37,32 +37,32 @@ class RabbitMQListener:
             self.__send_acknowledged_message(ch, method, properties, verification)
         except Exception as ex:
             verification['success'] = 'false'
-            self.logger.error("Error occurred while sending verification email. {}", ex)
+            self.logger.error(ex)
             self.__send_acknowledged_message(ch, method, properties, verification)
 
     def __password_reset_callback(self, ch, method, properties, body):
         pass_reset_request = json.loads(body)
         try:
             self.logger.info("Calling email service for verification email sending.")
-            EmailService.send_pass_reset_email(pass_reset_request)
+            self._email_service.send_pass_reset_email(pass_reset_request)
             self.logger.info("Successfully sent password reset request email.")
             pass_reset_request['success'] = 'true'
             self.__send_acknowledged_message(ch, method, properties, pass_reset_request)
         except Exception as ex:
             pass_reset_request['success'] = 'false'
-            self.logger.error("Error occurred while sending password reset request. {}", ex)
+            self.logger.error(ex)
             self.__send_acknowledged_message(ch, method, properties, pass_reset_request)
 
     def __notification_callback(self, ch, method, properties, body):
         notification = json.loads(body)
         try:
-            EmailService.send_notification_email(notification)
+            self._email_service.send_notification_email(notification)
             self.logger.info("Successfully sent notification email.")
             notification['success'] = 'true'
             self.__send_acknowledged_message(ch, method, properties, notification)
         except Exception as ex:
             notification['success'] = 'false'
-            self.logger.error("Error occurred while sending notification email. {}", ex)
+            self.logger.error(ex)
             self.__send_acknowledged_message(ch, method, properties, notification)
 
     def __send_acknowledged_message(self, ch, method, properties, message):
@@ -72,4 +72,4 @@ class RabbitMQListener:
             properties=pika.BasicProperties(correlation_id=properties.correlation_id),
             body=json.dumps(message).encode('utf-8'))
         ch.basic_ack(delivery_tag=method.delivery_tag)
-        self.logger.info("Successfully acknowledged message")
+        self.logger.info("Successfully acknowledged response message")

@@ -25,12 +25,12 @@ class EmailService:
         with open(self.VERIFICATION_TEMPLATE_PATH, 'r') as file:
             template = Template(file.read())
         html_body = template.render({
-            'name': verification.firstName + ' ' + verification.lastName,
-            'verification_link': os.getenv("VERIFICATION_URI") + verification.token
+            'name': verification.get('firstName') + ' ' + verification.get('lastName'),
+            'verification_link': os.getenv("VERIFICATION_URI") + verification.get('token')
         })
         msg = MIMEMultipart('related')
         msg['From'] = self._smtp_mail
-        msg['To'] = verification.email
+        msg['To'] = verification.get('email')
         msg['Subject'] = 'Verify your account'
         msg.attach(MIMEText(html_body, 'html'))
         with open(self.LOGO_IMAGE_PATH, 'rb') as img_file:
@@ -39,11 +39,11 @@ class EmailService:
             img.add_header('Content-Disposition', 'inline',
                            filename=os.path.basename(self.LOGO_IMAGE_PATH))
             msg.attach(img)
-            self.logger.debug("Logging to SMTP server")
+            self.logger.info("Logging to SMTP server")
             server = smtplib.SMTP_SSL(self._smtp_server, int(self._smtp_port))
             server.login(self._smtp_mail, self._smtp_password)
-            server.sendmail(self._smtp_mail, verification.email, msg.as_string())
-            self.logger.info("Successfully sent email to {}", verification.email)
+            server.sendmail(self._smtp_mail, verification.get('email'), msg.as_string())
+            self.logger.info("Successfully sent email.")
             server.quit()
 
     def send_pass_reset_email(self, pass_reset):
@@ -51,12 +51,12 @@ class EmailService:
         with open(self.PASSWORD_RESET_TEMPLATE_PATH, 'r') as file:
             template = Template(file.read())
         html_body = template.render({
-            'name': pass_reset.firstName + ' ' + pass_reset.lastName,
-            'pass_reset_link': os.getenv("PASS_RESET_URI") + pass_reset.token
+            'name': pass_reset.get('firstName') + ' ' + pass_reset.get('lastName'),
+            'pass_reset_link': os.getenv("PASS_RESET_URI") + pass_reset.get('token'),
         })
         msg = MIMEMultipart('related')
         msg['From'] = self._smtp_mail
-        msg['To'] = pass_reset.email
+        msg['To'] = pass_reset.get('email')
         msg['Subject'] = 'Forgot your password. No problem!'
         msg.attach(MIMEText(html_body, 'html'))
         with open(self.LOGO_IMAGE_PATH, 'rb') as img_file:
@@ -65,11 +65,11 @@ class EmailService:
             img.add_header('Content-Disposition', 'inline',
                            filename=os.path.basename(self.LOGO_IMAGE_PATH))
             msg.attach(img)
-            self.logger.debug("Logging to SMTP server")
+            self.logger.info("Logging to SMTP server")
             server = smtplib.SMTP_SSL(self._smtp_server, int(self._smtp_port))
             server.login(self._smtp_mail, self._smtp_password)
-            server.sendmail(self._smtp_mail, pass_reset.email, msg.as_string())
-            self.logger.info("Successfully sent email to {}", pass_reset.email)
+            server.sendmail(self._smtp_mail, pass_reset.get('email'), msg.as_string())
+            self.logger.info("Successfully sent email.")
             server.quit()
 
     def send_notification_email(self, notification):
@@ -77,13 +77,13 @@ class EmailService:
         with open(self.VERIFICATION_TEMPLATE_PATH, 'r') as file:
             template = Template(file.read())
         html_body = template.render({
-            'name': notification.firstName + ' ' + notification.lastName,
+            'name': notification.get('firstName') + ' ' + notification.get('lastName'),
             'main_page_url': os.getenv("MAIN_PAGE_URI"),
             'message': notification.message
         })
         msg = MIMEMultipart('related')
         msg['From'] = self._smtp_mail
-        msg['To'] = notification.email
+        msg['To'] = notification.get('email')
         msg['Subject'] = 'Verify your account'
         msg.attach(MIMEText(html_body, 'html'))
         with open(self.LOGO_IMAGE_PATH, 'rb') as img_file:
@@ -92,9 +92,9 @@ class EmailService:
             img.add_header('Content-Disposition', 'inline',
                            filename=os.path.basename(self.LOGO_IMAGE_PATH))
             msg.attach(img)
-            self.logger.debug("Logging to SMTP server")
+            self.logger.info("Logging to SMTP server")
             server = smtplib.SMTP_SSL(self._smtp_server, int(self._smtp_port))
             server.login(self._smtp_mail, self._smtp_password)
-            server.sendmail(self._smtp_mail, notification.email, msg.as_string())
-            self.logger.info("Successfully sent email to {}", notification.email)
+            server.sendmail(self._smtp_mail, notification.get('email'), msg.as_string())
+            self.logger.info("Successfully sent email.")
             server.quit()
