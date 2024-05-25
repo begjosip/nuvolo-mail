@@ -53,7 +53,7 @@ class EmailService:
             template = Template(file.read())
         html_body = template.render({
             'name': pass_reset.get('firstName') + ' ' + pass_reset.get('lastName'),
-            'pass_reset_link': os.getenv("PASS_RESET_URI") + pass_reset.get('token') + '?' + pass_reset.get('email'),
+            'pass_reset_link': os.getenv("PASS_RESET_URI") + pass_reset.get('email') + '/' + pass_reset.get('token'),
         })
         msg = MIMEMultipart('related')
         msg['From'] = self._smtp_mail
